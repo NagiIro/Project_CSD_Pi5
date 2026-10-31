@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>閉路電視•案件重組</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- 開始畫面 -->
+  <section id="start-screen" class="screen">
+    <div class="start-inner">
+      <div class="start-cam-dot"></div>
+      <h1 class="game-title">閉路電視<span class="title-dot">•</span>案件重組</h1>
+      <p class="game-subtitle">CCTV · CASE RECONSTRUCTION</p>
+      <button id="btn-start" class="big-btn">開始重組案件</button>
+      <div>
+        <button id="btn-settings" class="link-btn">⚙ 設定</button>
+      </div>
+      <p id="config-error" class="config-error"></p>
+    </div>
+  </section>
+
+  <!-- 遊戲畫面 -->
+  <section id="game-screen" class="screen hidden">
+    <header id="hud">
+      <div id="timer" title="剩餘時間">--:--</div>
+      <div class="hud-title">閉路電視•案件重組</div>
+      <div class="hud-right">
+        <button id="btn-check" class="check-btn">✔ 確認答案</button>
+        <button id="btn-autowin" class="fs-btn hidden">一鍵通關</button>
+        <button id="btn-fullscreen" class="fs-btn">全螢幕</button>
+        <button id="btn-reset" class="reset-btn">重置</button>
+      </div>
+    </header>
+    <main id="play-area">
+      <aside id="blocks-panel">
+        <div id="timeplace-blocks" class="block-grid"></div>
+        <div class="panel-divider"></div>
+        <div id="num-blocks" class="block-grid"></div>
+      </aside>
+      <section id="zones-panel"></section>
+    </main>
+  </section>
+
+  <!-- 成功 / 失敗覆疊 -->
+  <div id="overlay" class="hidden">
+    <div class="overlay-box">
+      <h2 id="overlay-title"></h2>
+      <p id="overlay-msg"></p>
+      <p id="overlay-api" class="api-status"></p>
+      <button id="btn-overlay-ok" class="big-btn">返回開始畫面</button>
+    </div>
+  </div>
+
+  <!-- 密碼鎖 -->
+  <div id="pin-modal" class="modal hidden">
+    <div class="modal-box pin-box">
+      <h3>輸入設定密碼</h3>
+      <div id="pin-display" class="pin-display"><span></span><span></span><span></span><span></span></div>
+      <p id="pin-error" class="pin-error"></p>
+      <div class="pin-keypad">
+        <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button>
+        <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button>
+        <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button>
+        <button data-key="clear" class="pin-fn">清除</button><button data-key="0">0</button><button data-key="back" class="pin-fn">⌫</button>
+      </div>
+      <button id="btn-pin-cancel" class="link-btn">取消</button>
+    </div>
+  </div>
+
+  <!-- 設定頁 -->
+  <div id="settings-modal" class="modal hidden">
+    <div class="modal-box settings-box">
+      <h3>遊戲設定</h3>
+      <div class="form-grid">
+        <label>限時（秒）<input id="set-timer" type="number" min="10" step="10"></label>
+        <label>設定密碼（4 位數字）<input id="set-pin" type="text" maxlength="4" inputmode="numeric"></label>
+        <label>影片 A 來源<input id="set-videoA" type="text"></label>
+        <label>影片 B 來源<input id="set-videoB" type="text"></label>
+        <label>副屏控制方式
+          <select id="set-sc-type">
+            <option value="local">本機第二屏（APK 副屏 / 瀏覽器視窗）</option>
+            <option value="pi5">PI5 播放端（HTTP）</option>
+            <option value="both">兩者同時</option>
+          </select>
+        </label>
+        <label>PI5 位址<input id="set-pi5-url" type="text" placeholder="http://192.168.0.50:3100"></label>
+        <label class="check"><input id="set-autowin" type="checkbox"> 一鍵通關模式（測試用：遊戲畫面顯示通關按鈕）</label>
+        <label class="check"><input id="set-api-enabled" type="checkbox"> 成功時發送 API request</label>
+        <label>API 方法
+          <select id="set-api-method"><option>POST</option><option>GET</option></select>
+        </label>
+        <label>　</label>
+        <label class="span2">API URL<input id="set-api-url" type="text"></label>
+        <label class="span2">API Headers（JSON）<textarea id="set-api-headers" rows="4" spellcheck="false"></textarea></label>
+        <label class="span2">API Body<textarea id="set-api-body" rows="4" spellcheck="false"></textarea></label>
+        <div class="span2 zones-editor-title">題目放置區（每區：圖片、日期、時間、閉路電視編號）</div>
+        <div id="zones-editor" class="span2 zones-editor"></div>
+      </div>
+      <p id="settings-error" class="settings-error"></p>
+      <div class="diag-box">
+        <div class="diag-title">副屏診斷</div>
+        <pre id="diag-output">按「重新整理」讀取顯示器狀態</pre>
+        <button id="btn-diag-refresh" class="fs-btn">重新整理</button>
+      </div>
+      <div class="modal-actions">
+        <button id="btn-settings-save" class="big-btn">儲存</button>
+        <button id="btn-settings-default" class="reset-btn">恢復預設</button>
+        <button id="btn-settings-cancel" class="fs-btn">取消</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 拖放時跟隨手指/滑鼠的幻影 -->
+  <div id="drag-ghost" class="hidden"></div>
+
+  <!-- 短訊提示（確認答案後顯示結果） -->
+  <div id="toast" class="hidden"></div>
+</div>
+
+<script src="js/shared.js"></script>
+<script src="js/game.js"></script>
+</body>
+</html>

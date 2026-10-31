@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>問題管理 - 問答挑戰</title>
+  <link rel="stylesheet" href="css/admin.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>📝 問題管理系統</h1>
+    <div class="topbar-actions">
+      <a href="/" class="btn btn-secondary">← 返回遊戲</a>
+      <button class="btn btn-primary" id="btn-add">＋ 新增問題</button>
+      <button class="btn btn-success" id="btn-save">💾 儲存全部</button>
+    </div>
+  </header>
+
+  <!-- 遊戲設定 -->
+  <section class="config-panel">
+    <h2>⚙️ 遊戲設定</h2>
+    <p class="hint">每題作答時間：玩家必須喺呢個時間內完成兩次作答（建議 3 或 5 秒）。整局總時間：完成全部 10 題嘅總限時（180 = 3 分鐘）。</p>
+    <div class="config-row">
+      <label class="config-label" for="question-time">每題限時（秒）</label>
+      <input type="number" id="question-time" min="1" max="30" step="1" style="max-width:120px" />
+      <label class="config-label" for="game-time" style="margin-left:24px">整局總時間（秒）</label>
+      <input type="number" id="game-time" min="30" max="600" step="10" style="max-width:120px" />
+      <button class="btn btn-primary" id="btn-save-qtime">儲存</button>
+    </div>
+    <div class="config-status" id="qtime-status"></div>
+  </section>
+
+  <!-- Webhook 設定 -->
+  <section class="config-panel">
+    <h2>🔗 成功觸發設定</h2>
+    <p class="hint">玩家任務成功時，伺服器會向以下 URL 發出 HTTP GET 請求（例如連去你手機嘅連結）。</p>
+    <div class="config-row">
+      <input type="url" id="webhook-url" placeholder="https://example.com/your-link" />
+      <button class="btn btn-primary" id="btn-save-webhook">儲存</button>
+      <button class="btn btn-secondary" id="btn-test-webhook">測試觸發</button>
+    </div>
+    <div class="config-status" id="webhook-status"></div>
+  </section>
+
+  <!-- 進度記錄（progressDB） -->
+  <section class="config-panel">
+    <h2>📊 遊戲進度記錄</h2>
+    <p class="hint">每局遊戲嘅開始、每題結果、成功/失敗都會記錄喺資料庫。記錄唔會自動刪除，需要時可以手動清空。</p>
+    <div id="events-list" class="events-list">載入中…</div>
+    <div style="margin-top:16px; display:flex; gap:12px;">
+      <button class="btn btn-secondary" id="btn-refresh-events">🔄 重新整理</button>
+      <button class="btn btn-danger" id="btn-clear-events">🗑 清空所有記錄</button>
+    </div>
+  </section>
+
+  <div class="status-bar" id="status-bar"></div>
+
+  <main class="question-list" id="question-list"></main>
+
+  <script src="js/admin.js"></script>
+</body>
+</html>

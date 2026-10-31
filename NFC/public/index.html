@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>NFC Gate Trigger 後台</title>
+<style>
+  * { box-sizing: border-box; }
+  body { font-family: -apple-system, "Segoe UI", "Microsoft JhengHei", sans-serif; background: #0f172a; color: #e2e8f0; margin: 0; padding: 24px; }
+  .wrap { max-width: 760px; margin: 0 auto; }
+  h1 { font-size: 1.4rem; margin: 0 0 16px; }
+  h2 { font-size: 1.05rem; margin: 0 0 12px; color: #94a3b8; }
+  .card { background: #1e293b; border: 1px solid #334155; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
+  label { display: block; font-size: .85rem; color: #94a3b8; margin: 12px 0 4px; }
+  input, select { width: 100%; padding: 10px 12px; border-radius: 8px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; font-size: .95rem; }
+  input:focus, select:focus { outline: none; border-color: #38bdf8; }
+  button { padding: 10px 18px; border: 0; border-radius: 8px; font-size: .95rem; cursor: pointer; margin-top: 14px; margin-right: 8px; }
+  .btn-primary { background: #0ea5e9; color: #fff; }
+  .btn-primary:hover { background: #0284c7; }
+  .btn-ghost { background: #334155; color: #e2e8f0; }
+  .btn-ghost:hover { background: #475569; }
+  .row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .row > div { flex: 1; min-width: 140px; }
+  .pill { display: inline-block; padding: 3px 10px; border-radius: 999px; font-size: .8rem; }
+  .ok { background: #14532d; color: #86efac; }
+  .bad { background: #7f1d1d; color: #fca5a5; }
+  #msg { margin-top: 10px; font-size: .9rem; min-height: 1.2em; }
+  table { width: 100%; border-collapse: collapse; font-size: .82rem; }
+  td, th { text-align: left; padding: 6px 8px; border-bottom: 1px solid #334155; word-break: break-all; }
+  th { color: #94a3b8; font-weight: 600; }
+  .stat { font-size: .9rem; margin: 4px 0; color: #cbd5e1; }
+  code { background: #0f172a; padding: 2px 6px; border-radius: 6px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>🎮 NFC Gate Trigger 後台</h1>
+
+  <div class="card">
+    <h2>狀態</h2>
+    <div class="stat">NFC 讀卡器：<span id="nfcState">載入中…</span></div>
+    <div class="stat" id="retryRow" style="display:none">下次自動重試：<span id="nextRetry">—</span></div>
+    <div class="stat">最後卡片 UID：<code id="lastUid">—</code></div>
+    <div class="stat">最後觸發：<span id="lastTrigger">—</span></div>
+    <button class="btn-ghost" onclick="reconnectNow()">🔄 立即尋找讀卡器</button>
+  </div>
+
+  <div class="card">
+    <h2>API 設定</h2>
+    <label for="apiUrl">觸發 API URL（拍卡時會呼叫呢條 link）</label>
+    <input id="apiUrl" type="url" placeholder="https://...">
+    <div class="row">
+      <div>
+        <label for="method">Request Method</label>
+        <select id="method">
+          <option value="POST">POST（JSON body 帶 uid）</option>
+          <option value="GET">GET（query 帶 ?uid=）</option>
+        </select>
+      </div>
+      <div>
+        <label for="cooldownMs">同一張卡冷卻時間 (ms)</label>
+        <input id="cooldownMs" type="number" min="0" step="500">
+      </div>
+      <div>
+        <label for="reconnectSec">讀卡器斷線自動重試 (秒)</label>
+        <input id="reconnectSec" type="number" min="1" step="1">
+      </div>
+    </div>
+    <button class="btn-primary" onclick="saveConfig()">儲存設定</button>
+    <button class="btn-ghost" onclick="testTrigger()">立即測試觸發</button>
+    <div id="msg"></div>
+  </div>
+
+  <div class="card">
+    <h2>事件紀錄（最近 50 條）</h2>
+    <table>
+      <thead><tr><th>時間</th><th>類型</th><th>內容</th></tr></thead>
+      <tbody id="logBody"><tr><td colspan="3">載入中…</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+async function loadConfig() {
+  const c = await (await fetch('/api/config')).json();
+  document.getElementById('apiUrl').value = c.apiUrl;
+  document.getElementById('method').value = c.method;
+  document.getElementById('cooldownMs').value = c.cooldownMs;
+  document.getElementById('reconnectSec').value = Math.round((c.reconnectMs || 30000) / 1000);
+}
+
+async function loadStatus() {
+  try {
+    const s = await (await fetch('/api/status')).json();
+    const el = document.getElementById('nfcState');
+    if (s.nfcReady) {
+      el.innerHTML = `<span class="pill ok">已連接</span> ${s.nfcPort || ''}`;
+    } else {
+      el.innerHTML = `<span class="pill bad">未連接</span> ${s.nfcError || ''}`;
+    }
+    const retryRow = document.getElementById('retryRow');
+    if (!s.nfcReady && s.nextRetryAt) {
+      const secs = Math.max(0, Math.round((new Date(s.nextRetryAt) - Date.now()) / 1000));
+      document.getElementById('nextRetry').textContent = `${secs} 秒後`;
+      retryRow.style.display = '';
+    } else {
+      retryRow.style.display = 'none';
+    }
+    document.getElementById('lastUid').textContent = s.lastUid || '—';
+    if (s.lastTrigger) {
+      const t = s.lastTrigger;
+      const label = t.ok ? `<span class="pill ok">成功 HTTP ${t.status}</span>` : `<span class="pill bad">失敗 ${t.error || ('HTTP ' + t.status)}</span>`;
+      document.getElementById('lastTrigger').innerHTML = `${new Date(t.time).toLocaleString()} ${label}`;
+    }
+  } catch (e) { /* server restarting */ }
+}
+
+async function loadLogs() {
+  try {
+    const rows = await (await fetch('/api/logs')).json();
+    const tb = document.getElementById('logBody');
+    tb.innerHTML = rows.map(r =>
+      `<tr><td>${new Date(r.time).toLocaleTimeString()}</td><td>${r.type}</td><td>${r.message}</td></tr>`
+    ).join('') || '<tr><td colspan="3">暫無紀錄</td></tr>';
+  } catch (e) {}
+}
+
+async function reconnectNow() {
+  const msg = document.getElementById('msg');
+  msg.textContent = '尋找緊讀卡器…';
+  await fetch('/api/reconnect', { method: 'POST' });
+  setTimeout(() => { msg.textContent = ''; loadStatus(); loadLogs(); }, 2000);
+}
+
+async function saveConfig() {
+  const msg = document.getElementById('msg');
+  const body = {
+    apiUrl: document.getElementById('apiUrl').value.trim(),
+    method: document.getElementById('method').value,
+    cooldownMs: parseInt(document.getElementById('cooldownMs').value, 10),
+    reconnectMs: parseInt(document.getElementById('reconnectSec').value, 10) * 1000
+  };
+  const r = await fetch('/api/config', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
+  const j = await r.json();
+  msg.innerHTML = r.ok ? '<span class="pill ok">已儲存</span>' : `<span class="pill bad">${j.error || '儲存失敗'}</span>`;
+  loadLogs();
+}
+
+async function testTrigger() {
+  const msg = document.getElementById('msg');
+  msg.textContent = '測試中…';
+  const r = await fetch('/api/test', { method: 'POST' });
+  const j = await r.json();
+  msg.innerHTML = j.ok
+    ? `<span class="pill ok">測試成功 HTTP ${j.status}</span>`
+    : `<span class="pill bad">測試失敗：${j.error || ('HTTP ' + j.status)}</span>`;
+  loadLogs();
+}
+
+loadConfig(); loadStatus(); loadLogs();
+setInterval(loadStatus, 3000);
+setInterval(loadLogs, 5000);
+</script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "port": 3100,
+  "videoA": "media/gifa.mp4",
+  "videoB": "media/gifb.mp4",
+  "heartbeatTimeoutMs": 6000
+}

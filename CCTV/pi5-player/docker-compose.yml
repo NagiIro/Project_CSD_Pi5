@@ -1,0 +1,7 @@
+services:
+  pi5-player:
+    build: .
+    container_name: cctv-pi5-player
+    restart: unless-stopped
+    ports:
+      - "3100:3100"

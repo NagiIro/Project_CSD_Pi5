@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>醫院尋證•急救行動</title>
+<link rel="stylesheet" href="style.css?v=7">
+</head>
+<body>
+<div id="scanlines"></div>
+
+<!-- ============ 開始畫面 ============ -->
+<section id="screen-start" class="screen">
+  <div class="title-block">
+    <div class="ecg-deco">—♥—∿∿∿—♥—</div>
+    <h1 class="game-title">醫院尋證<span class="dot">•</span>急救行動</h1>
+    <div class="subtitle">CPR EMERGENCY ACTION</div>
+  </div>
+  <div class="menu">
+    <button id="btn-start" class="btn btn-big">▶ 開始急救</button>
+    <button id="btn-settings" class="btn">⚙ 設定</button>
+  </div>
+  <div class="hint">按空白鍵開始 ｜ Ctrl + R 隨時返回此畫面</div>
+</section>
+
+<!-- ============ 密碼鎖 ============ -->
+<section id="screen-pwd" class="screen hidden">
+  <h2 class="screen-title">設定密碼</h2>
+  <p class="desc">請輸入密碼以進入設定</p>
+  <input id="pwd-input" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="••••">
+  <div id="pwd-error" class="error hidden">密碼錯誤</div>
+  <div class="menu">
+    <button id="btn-pwd-ok" class="btn">確認</button>
+    <button id="btn-pwd-back" class="btn btn-ghost">返回</button>
+  </div>
+</section>
+
+<!-- ============ 設定畫面 ============ -->
+<section id="screen-settings" class="screen hidden">
+  <h2 class="screen-title">設定</h2>
+  <div class="form">
+    <label class="row">
+      <span>API Request 開關</span>
+      <input id="set-api-on" type="checkbox">
+    </label>
+    <label class="row col">
+      <span>API Request 網址</span>
+      <input id="set-api-url" type="text" placeholder="http://192.168.x.x:port/trigger" autocomplete="off">
+    </label>
+    <label class="row">
+      <span>CPR 時長（秒，5–120）</span>
+      <input id="set-duration" type="number" min="5" max="120" step="1">
+    </label>
+    <hr>
+    <label class="row col">
+      <span>修改設定密碼（留空 = 不變）</span>
+      <input id="set-pwd-new" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="新密碼">
+    </label>
+    <label class="row col">
+      <span>確認新密碼</span>
+      <input id="set-pwd-new2" type="password" inputmode="numeric" maxlength="8" autocomplete="off" placeholder="再次輸入">
+    </label>
+    <div id="set-msg" class="msg hidden"></div>
+  </div>
+  <div class="menu">
+    <button id="btn-set-save" class="btn">儲存</button>
+    <button id="btn-set-back" class="btn btn-ghost">返回</button>
+  </div>
+</section>
+
+<!-- ============ 玩法說明 ============ -->
+<section id="screen-howto" class="screen hidden">
+  <h2 class="screen-title">玩法說明</h2>
+  <div class="howto-list">
+    <p><span class="ic">❤</span>紅色標記會從右方滑向左側的<strong>白色判定線</strong></p>
+    <p><span class="ic">⌨</span>標記到達白線瞬間，按下<strong>空白鍵</strong>進行按壓</p>
+    <p><span class="ic">⏱</span><strong id="howto-duration">12</strong> 秒內每隔 <strong>1–2 秒</strong>一次指示，容許誤差 <strong>±0.5 秒</strong></p>
+    <p><span class="ic ok">✔</span>全部指示正確 → <strong>搶救成功</strong>，播放影片</p>
+    <p><span class="ic bad">✖</span>按錯時機或漏按 → <strong>搶救失敗</strong>，重新開始</p>
+  </div>
+  <div class="menu">
+    <button id="btn-howto-go" class="btn btn-big">▶ 按空白鍵開始急救</button>
+  </div>
+</section>
+
+<!-- ============ CPR 遊戲畫面 ============ -->
+<section id="screen-game" class="screen hidden">
+  <div class="game-hud">
+    <div id="game-status" class="game-status">跟隨節拍，在標記到達白線時按下空白鍵！</div>
+    <div id="game-count" class="game-count">0 / 5</div>
+  </div>
+  <canvas id="ecg-canvas"></canvas>
+  <div id="game-flash" class="game-flash hidden"></div>
+</section>
+
+<!-- ============ 失敗畫面 ============ -->
+<section id="screen-fail" class="screen hidden">
+  <h1 class="fail-title">搶救失敗</h1>
+  <div class="flatline">─────────────────────</div>
+  <p class="desc">返回開始畫面…</p>
+</section>
+
+<!-- ============ 成功 / 影片畫面 ============ -->
+<section id="screen-video" class="screen hidden">
+  <video id="loop-video" src="Loop.mp4" loop muted playsinline></video>
+  <div id="video-error" class="video-error hidden">找不到 Loop.mp4（請放在遊戲同一資料夾）｜按 Ctrl + R 返回</div>
+</section>
+
+<script src="game.js?v=8"></script>
+</body>
+</html>

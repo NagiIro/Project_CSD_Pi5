@@ -1,0 +1,33 @@
+{
+  "gameTitle": "閉路電視•案件重組",
+  "startButtonText": "開始重組案件",
+  "timerSeconds": 420,
+  "settingsPin": "0000",
+
+  "videoA": "media/gifa.mp4",
+  "videoB": "media/gifb.mp4",
+
+  "screenControl": {
+    "type": "local",
+    "pi5BaseUrl": "http://192.168.0.50:3100"
+  },
+
+  "api": {
+    "enabled": false,
+    "url": "https://example.com/api/case-solved",
+    "method": "POST",
+    "headers": { "Content-Type": "application/json" },
+    "body": "{\"event\":\"case_solved\",\"game\":\"cctv\"}"
+  },
+
+  "zones": [
+    { "id": 1, "image": "media/cctv_show01.jpg", "date": "15/11/2026", "time": "09:00", "camera": "DH1" },
+    { "id": 2, "image": "media/cctv_show02.jpg", "date": "16/11/2026", "time": "10:38", "camera": "DH2" },
+    { "id": 3, "image": "media/cctv_show03.jpg", "date": "13/11/2026", "time": "11:23", "camera": "BR1" },
+    { "id": 4, "image": "media/cctv_show04.jpg", "date": "17/11/2026", "time": "16:38", "camera": "PG1" },
+    { "id": 5, "image": "media/cctv_show05.jpg", "date": "17/11/2026", "time": "14:24", "camera": "FA1" },
+    { "id": 6, "image": "media/cctv_show06.jpg", "date": "17/11/2026", "time": "18:57", "camera": "FA2" },
+    { "id": 7, "image": "media/cctv_show07.jpg", "date": "14/11/2026", "time": "23:35", "camera": "SC1" },
+    { "id": 8, "image": "media/cctv_show08.jpg", "date": "15/11/2026", "time": "07:16", "camera": "SC2" }
+  ]
+}

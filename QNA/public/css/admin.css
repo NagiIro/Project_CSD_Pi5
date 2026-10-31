@@ -1,0 +1,196 @@
+/* ===== 管理介面 樣式 ===== */
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --bg: #0f1420;
+  --card: #1a2233;
+  --card-light: #232d42;
+  --accent: #4f8cff;
+  --success: #2ecc71;
+  --danger: #ff4d5e;
+  --text: #eef2ff;
+  --text-dim: #9aa5c0;
+}
+
+body {
+  font-family: "PingFang HK", "Microsoft JhengHei", "Noto Sans TC", sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 18px 32px;
+  background: rgba(15, 20, 32, 0.92);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+.topbar h1 { font-size: 24px; }
+.topbar-actions { display: flex; gap: 12px; }
+
+.btn {
+  padding: 10px 20px;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 700;
+  color: var(--text);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: filter 0.15s ease, transform 0.1s ease;
+}
+.btn:hover { filter: brightness(1.15); }
+.btn:active { transform: scale(0.97); }
+.btn-primary { background: var(--accent); }
+.btn-success { background: var(--success); }
+.btn-danger { background: var(--danger); }
+.btn-secondary { background: var(--card-light); border: 1px solid rgba(255,255,255,0.15); }
+
+.config-panel {
+  max-width: 1000px;
+  margin: 24px auto;
+  padding: 24px 32px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 16px;
+}
+.config-panel h2 { font-size: 20px; margin-bottom: 8px; }
+.config-panel .hint { font-size: 14px; color: var(--text-dim); margin-bottom: 16px; }
+.config-row { display: flex; gap: 12px; align-items: center; }
+.config-label { font-size: 15px; white-space: nowrap; }
+.config-row input {
+  flex: 1;
+  padding: 12px 16px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 10px;
+  outline: none;
+}
+.config-row input:focus { border-color: var(--accent); }
+.config-status { margin-top: 10px; font-size: 14px; min-height: 20px; }
+
+/* ===== 進度記錄 ===== */
+.events-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  font-size: 14px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+.event-row {
+  display: flex;
+  gap: 16px;
+  padding: 8px 12px;
+  background: rgba(0, 0, 0, 0.25);
+  border-radius: 8px;
+}
+.event-time { color: var(--text-dim); white-space: nowrap; }
+.event-name { font-weight: 700; white-space: nowrap; }
+.event-detail { color: var(--text-dim); }
+
+.status-bar {
+  max-width: 1000px;
+  margin: 0 auto 16px;
+  padding: 0 8px;
+  font-size: 15px;
+  min-height: 22px;
+}
+.status-bar.ok { color: var(--success); }
+.status-bar.err { color: var(--danger); }
+
+.question-list {
+  max-width: 1000px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.q-card {
+  display: flex;
+  gap: 16px;
+  padding: 20px 24px;
+  background: var(--card);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+}
+.q-index {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 17px;
+  background: var(--card-light);
+  border-radius: 10px;
+}
+.q-body { flex: 1; display: flex; flex-direction: column; gap: 12px; }
+.q-question-input {
+  width: 100%;
+  padding: 10px 14px;
+  font-size: 17px;
+  font-weight: 600;
+  font-family: inherit;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  outline: none;
+}
+.q-question-input:focus { border-color: var(--accent); }
+
+.q-options { display: flex; flex-direction: column; gap: 8px; }
+.q-option-row { display: flex; align-items: center; gap: 10px; }
+.q-option-radio {
+  width: 20px;
+  height: 20px;
+  accent-color: var(--success);
+  cursor: pointer;
+}
+.q-option-letter {
+  flex-shrink: 0;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 14px;
+  background: var(--accent);
+  border-radius: 7px;
+}
+.q-option-row.is-answer .q-option-letter { background: var(--success); }
+.q-option-input {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 15px;
+  font-family: inherit;
+  color: var(--text);
+  background: rgba(0, 0, 0, 0.3);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 8px;
+  outline: none;
+}
+.q-option-input:focus { border-color: var(--accent); }
+.q-answer-hint { font-size: 13px; color: var(--text-dim); }
+
+.q-actions {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}

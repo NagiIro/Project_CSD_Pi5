@@ -1,0 +1,18 @@
+{
+  "name": "nfc-gate-trigger",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Pi 5 + PN532 (USB-UART) NFC reader: calls a configurable API when a tag is scanned. Admin web UI included.",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pn532": "^1.0.0",
+    "serialport": "^12.0.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

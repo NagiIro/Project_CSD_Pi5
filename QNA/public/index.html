@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>問答挑戰</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+  <div class="bg-decor">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+  </div>
+
+  <!-- ===== 開始畫面（試卷風格） ===== -->
+  <section id="screen-start" class="screen active">
+    <div class="start-card exam-paper">
+      <div class="exam-header">
+        <div class="exam-school">立德學院</div>
+        <div class="exam-subject">考試試卷</div>
+        <div class="exam-meta">
+          <span>考試時間：<strong class="rule-total-time">3 分鐘</strong></span>
+          <span>題目總數：10 題</span>
+        </div>
+      </div>
+      <div class="exam-rules">
+        <div class="exam-rules-title">考生須知</div>
+        <ol class="exam-rules-list">
+          <li>本試卷共 10 題，須於 <strong class="rule-total-time">3 分鐘</strong> 內完成。</li>
+          <li>每題須以鍵盤 A、B、C 作答<strong>兩次</strong>，兩次皆正確方為過關。</li>
+          <li>每題限時 <strong><span id="rule-question-time">5</span> 秒</strong>內完成兩次作答。</li>
+          <li>凡答錯或逾時者，須由第 1 題重新作答。</li>
+          <li>完成全部題目，即為考試合格。</li>
+        </ol>
+      </div>
+      <div class="press-start blink">按 A / B / C 開始考試</div>
+    </div>
+  </section>
+
+  <!-- ===== 遊戲畫面 ===== -->
+  <section id="screen-game" class="screen">
+    <header class="game-header">
+      <div class="progress-wrap">
+        <div class="progress-label">進度 <span id="progress-text">1 / 10</span></div>
+        <div class="progress-dots" id="progress-dots"></div>
+      </div>
+      <div class="timer-wrap">
+        <div class="timer-label">⏱ 剩餘時間</div>
+        <div class="timer-value" id="timer-text">3:00</div>
+      </div>
+    </header>
+    <div class="timer-bar"><div class="timer-bar-fill" id="timer-bar-fill"></div></div>
+
+    <main class="question-area">
+      <div class="question-card" id="question-card">
+        <div class="question-number" id="question-number">第 1 題</div>
+        <h2 class="question-text" id="question-text"></h2>
+        <div class="attempt-bar">
+          <div class="attempt-chip" id="chip-1">
+            <span class="chip-name">第 1 次作答</span>
+            <span class="chip-status">待輸入</span>
+          </div>
+          <div class="attempt-chip" id="chip-2">
+            <span class="chip-name">第 2 次作答</span>
+            <span class="chip-status">待輸入</span>
+          </div>
+          <div class="q-timer-wrap">
+            <span class="q-timer-label">本題限時</span>
+            <div class="q-timer"><div class="q-timer-fill" id="q-timer-fill"></div></div>
+          </div>
+        </div>
+        <div class="options" id="options">
+          <button class="option" data-idx="0">
+            <span class="option-key">A</span>
+            <span class="option-text"></span>
+            <span class="option-picks"></span>
+          </button>
+          <button class="option" data-idx="1">
+            <span class="option-key">B</span>
+            <span class="option-text"></span>
+            <span class="option-picks"></span>
+          </button>
+          <button class="option" data-idx="2">
+            <span class="option-key">C</span>
+            <span class="option-text"></span>
+            <span class="option-picks"></span>
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <!-- 答啱 / 答錯 提示 -->
+    <div class="feedback-overlay" id="feedback-overlay">
+      <div class="feedback-box" id="feedback-box">
+        <div class="feedback-icon" id="feedback-icon"></div>
+        <div class="feedback-text" id="feedback-text"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 成功畫面 ===== -->
+  <section id="screen-success" class="screen">
+    <div class="result-card success-card exam-paper">
+      <div class="stamp stamp-pass">合格</div>
+      <h1 class="result-title">考試合格</h1>
+      <p class="result-subtitle">你已完成全部 10 題，成績合格</p>
+      <p class="result-time" id="success-time-used"></p>
+      <div class="countdown-circle">
+        <div class="countdown-number" id="success-countdown">15</div>
+        <div class="countdown-label">秒後返回開始畫面</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== 失敗畫面 ===== -->
+  <section id="screen-fail" class="screen">
+    <div class="result-card fail-card exam-paper">
+      <div class="stamp stamp-fail">未完成</div>
+      <h1 class="result-title">時間到</h1>
+      <p class="result-subtitle">未能够喺限時內完成，考試不合格</p>
+      <div class="press-start blink">按 A / B / C 返回開始畫面</div>
+    </div>
+  </section>
+
+  <script src="js/game.js"></script>
+</body>
+</html>

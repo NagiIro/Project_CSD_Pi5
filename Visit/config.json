@@ -1,0 +1,8 @@
+{
+  "video_a": "gifa.mp4",
+  "video_b": "gifb.mp4",
+  "fullscreen": true,
+  "switch_key": 32,
+  "escape_key": 27,
+  "default_fps": 25.0
+}

@@ -1,0 +1,29 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.cctv.game'
+    compileSdk 33
+
+    defaultConfig {
+        applicationId "com.cctv.game"
+        minSdk 26
+        targetSdk 33
+        versionCode 1
+        versionName "1.0"
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    // 停用 dataBinding 等預設關閉即可；純 WebView 專案無第三方依賴
+}
+
+// 每次 build 前把最新網頁檔同步進 assets，web/ 永遠是單一編輯來源
+tasks.register('syncWeb', Copy) {
+    from '../web'
+    into 'src/main/assets/www'
+    exclude 'README.md'
+}
+preBuild.dependsOn syncWeb

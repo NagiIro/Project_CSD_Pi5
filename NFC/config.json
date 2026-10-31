@@ -1,0 +1,7 @@
+{
+  "apiUrl": "https://api.questxr.ai/api/gate-trigger/0ea5a611e89a3063f15b03a1b4d0e8af5cb7",
+  "method": "POST",
+  "serialPort": "auto",
+  "cooldownMs": 5000,
+  "reconnectMs": 30000
+}

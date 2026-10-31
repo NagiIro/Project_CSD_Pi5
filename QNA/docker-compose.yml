@@ -1,0 +1,44 @@
+services:
+  # 前台（遊戲界面）+ CMS 後台（/admin.html）同一個 app 提供
+  quiz-game:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - DATABASE_URL=postgres://quiz:quizpass@progressdb:5432/quizdb
+    volumes:
+      # 將問題同設定 mount 出嚟，改完 data/*.json 唔使 rebuild
+      - ./data:/app/data
+    depends_on:
+      - progressdb
+    restart: unless-stopped
+
+  # progressDB：記錄每局遊戲進度（開始、每題結果、成功/失敗）
+  progressdb:
+    image: postgres:16-alpine
+    environment:
+      - POSTGRES_USER=quiz
+      - POSTGRES_PASSWORD=quizpass
+      - POSTGRES_DB=quizdb
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+    # 冇對外開 port，只有內部 app 連接
+
+  # 圖片類資產儲存（MinIO）：而家冇圖片題目，有需要先開
+  # minio:
+  #   image: minio/minio:latest
+  #   command: server /data --console-address ":9001"
+  #   environment:
+  #     - MINIO_ROOT_USER=admin
+  #     - MINIO_ROOT_PASSWORD=changeme123
+  #   ports:
+  #     - "9000:9000"   # S3 API
+  #     - "9001:9001"   # 管理介面
+  #   volumes:
+  #     - miniodata:/data
+  #   restart: unless-stopped
+
+volumes:
+  pgdata:
+  # miniodata:

@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="google" content="notranslate">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCTV 第二屏幕（PI5 播放端）</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; cursor: none; }
+  #stage { position: fixed; inset: 0; }
+  #stage img, #stage video {
+    width: 100%; height: 100%; object-fit: contain; display: block;
+    opacity: 0; transition: opacity .5s ease;
+  }
+  #stage .show { opacity: 1; }
+  #status {
+    position: fixed; left: 10px; bottom: 8px; z-index: 9;
+    color: #27e0a4; font: 12px/1.4 monospace; opacity: .55;
+    text-shadow: 0 0 4px #000;
+  }
+</style>
+</head>
+<body>
+<div id="stage"></div>
+<div id="status"></div>
+<script>
+(function () {
+  const stage = document.getElementById('stage');
+  const status = document.getElementById('status');
+  let cfg = null;
+  let current = null;
+  let lastError = '';
+
+  function isImage(url) { return /\.(gif|png|jpe?g|webp|avif)(\?|#|$)/i.test(url); }
+
+  function makeMedia(url) {
+    if (isImage(url)) {
+      const img = document.createElement('img');
+      img.src = url;
+      return img;
+    }
+    const v = document.createElement('video');
+    v.src = url; v.muted = true; v.loop = true; v.autoplay = true; v.playsInline = true;
+    v.play().catch(() => {});
+    return v;
+  }
+
+  function render(which) {
+    if (!cfg || which === current) return;
+    current = which;
+    const url = which === 'B' ? cfg.videoB : cfg.videoA;
+    const media = makeMedia(url);
+    stage.innerHTML = '';
+    stage.appendChild(media);
+    requestAnimationFrame(() => media.classList.add('show'));
+  }
+
+  function tick() {
+    fetch('/api/state', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((s) => {
+        render(s.video);
+        status.textContent = 'PI5 · 影片 ' + s.video +
+          ' · 遊戲心跳: ' + (s.heartbeatAgeMs == null ? '無' : Math.round(s.heartbeatAgeMs / 1000) + 's 前');
+      })
+      .catch((e) => { lastError = e.message; status.textContent = 'PI5 · 伺服器連線失敗: ' + lastError; });
+  }
+
+  fetch('/api/config', { cache: 'no-store' })
+    .then((r) => r.json())
+    .then((c) => { cfg = c; tick(); setInterval(tick, 700); })
+    .catch((e) => { status.textContent = '讀取 /api/config 失敗: ' + e.message; });
+})();
+</script>
+</body>
+</html>
