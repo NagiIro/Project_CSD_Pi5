@@ -1,0 +1,6 @@
+D:\Github\btTrack\app\src\main\java\com\bttrack\app\BeaconScannerService.java
+D:\Github\btTrack\app\src\main\java\com\bttrack\app\BootReceiver.java
+D:\Github\btTrack\app\src\main\java\com\bttrack\app\HttpTrigger.java
+D:\Github\btTrack\app\src\main\java\com\bttrack\app\IBeacon.java
+D:\Github\btTrack\app\src\main\java\com\bttrack\app\MainActivity.java
+D:\Github\btTrack\build\gen\com\bttrack\app\R.java 
